@@ -110,7 +110,7 @@ if ($ext == "doc")  {
 // IF it was originally a PDF 
 if ($ext == "pdf")  {
 	if(move_uploaded_file($_FILES['faxFile']['tmp_name'], $input_file)) {
-		$input_file_type == "pdf";
+		$input_file_type = "pdf";
 	}else{
 		echo "There was an error uploading the file, please try again!";
 	}
