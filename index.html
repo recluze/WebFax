@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Webfax by recluze</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/recluze/WebFax">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/recluze/WebFax/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/recluze/WebFax/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Webfax</h1>
+          <p>WebFax for Asterisk </p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/recluze">recluze</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Web Fax for Asterisk php script</h1>
+
+<ul>
+<li>written by recluze (<a href="http://csrdu.org/nauman">http://csrdu.org/nauman</a>) </li>
+<li>queries, comments to: <a href="mailto:nauman@csrdu.org">nauman@csrdu.org</a> or <a href="mailto:recluze@gmail.com">recluze@gmail.com</a> </li>
+</ul><p>Redistribution allowed provided this notice remains visible at the top. 
+Released under GPLv3. </p>
+
+<p>Installation instructions: 
+    0. Make sure you have Fax for Asterisk (or Free Fax for Asterisk) installed. 
+       See [<a href="http://downloads.digium.com/pub/telephony/fax/README">http://downloads.digium.com/pub/telephony/fax/README</a>] 
+       for details on that. Also make sure you have the FAX module installed 
+       in FreePBX and configured to send out faxes. You will also need a service 
+       provided (ITSP) that supports T.38 faxing. </p>
+
+<pre><code>1. Extract all Web Fax files to somewhere on your web server's htdocs. If you're 
+   running apache as user asterisk, you need to chown the Web Fax files. 
+
+&gt;   chown asterisk:asterisk &lt;wwwroot&gt;/webfax -R 
+
+2. If you're running asterisk as the user 'asterisk', chown the faxnotify.php script: 
+
+&gt;   chown asterisk:asterisk faxnotify.php 
+
+3. Make faxnotify.php executable. It will be called from the dialplan from 
+   within asterisk: 
+
+&gt;   chmod +x faxnotify.php 
+
+4. Move faxnotify.php to $ASTERISDIR/bin/faxnotify.php 
+
+&gt;   mv /var/www/html/webfax/faxnotify.php /var/lib/asterisk/bin/faxnotify.php 
+
+5. Create a dialplan with [outboundfax] in extensions_additional.conf with the
+   following content: 
+
+    [outboundfax]
+    ; exten =&gt; s,1,NoOp(send a fax)
+    exten =&gt; s,1,Set(FAXOPT(filename)=${FAXFILE})
+    exten =&gt; s,n,Set(FAXOPT(ecm)=yes)
+    exten =&gt; s,n,Set(FAXOPT(headerinfo)=${FAXHEADER})
+    exten =&gt; s,n,Set(FAXOPT(localstationid)=${LOCALID})
+    exten =&gt; s,n,Set(FAXOPT(maxrate)=14400)
+    exten =&gt; s,n,Set(FAXOPT(minrate)=2400)
+    exten =&gt; s,n,SendFAX(${FAXFILE},d)
+    exten =&gt; s,n,System(${ASTVARLIBDIR}/bin/faxnotify.php INIT "${EMAIL}" "${DESTINATION}" "${TIMESTAMP}" "NO_STATUS" "NO_PAGES")
+    exten =&gt; h,1,NoOp(FAXOPT(ecm) : ${FAXOPT(ecm)})
+    exten =&gt; h,n,NoOp(FaxStatus : ${FAXSTATUS})
+    exten =&gt; h,n,NoOp(FaxStatusString : ${FAXSTATUSSTRING})
+    exten =&gt; h,n,NoOp(FaxError : ${FAXERROR})
+    exten =&gt; h,n,NoOp(RemoteStationID : ${REMOTESTATIONID})
+    exten =&gt; h,n,NoOp(FaxPages : ${FAXPAGES})
+    exten =&gt; h,n,NoOp(FaxBitRate : ${FAXBITRATE})
+    exten =&gt; h,n,NoOp(FaxResolution : ${FAXRESOLUTION})
+    exten =&gt; h,n,System(${ASTVARLIBDIR}/bin/faxnotify.php NOTIFY "${EMAIL}" "${DESTINATION}" "${TIMESTAMP}" "${FAXSTATUSSTRING}" "${FAXPAGES}")
+    ; end of outboundfax context
+
+(You can also use the following command to add the dialplan directly to extensions_additional.conf 
+[not yet implemented] 
+
+&gt;  chmod +x insert_dialplan.sh 
+&gt;  ./insert_dialplan.sh 
+</code></pre>
+
+<p>Usage: </p>
+
+<pre><code>1. Point your browser to sendfaxform.html and see the magic happen. 
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
